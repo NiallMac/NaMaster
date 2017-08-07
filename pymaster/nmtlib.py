@@ -248,21 +248,6 @@ class flatsky_info(_object):
     __swig_setmethods__["pixsize"] = _nmtlib.flatsky_info_pixsize_set
     __swig_getmethods__["pixsize"] = _nmtlib.flatsky_info_pixsize_get
     if _newclass:pixsize = _swig_property(_nmtlib.flatsky_info_pixsize_get, _nmtlib.flatsky_info_pixsize_set)
-    __swig_setmethods__["n_ell"] = _nmtlib.flatsky_info_n_ell_set
-    __swig_getmethods__["n_ell"] = _nmtlib.flatsky_info_n_ell_get
-    if _newclass:n_ell = _swig_property(_nmtlib.flatsky_info_n_ell_get, _nmtlib.flatsky_info_n_ell_set)
-    __swig_setmethods__["i_dell"] = _nmtlib.flatsky_info_i_dell_set
-    __swig_getmethods__["i_dell"] = _nmtlib.flatsky_info_i_dell_get
-    if _newclass:i_dell = _swig_property(_nmtlib.flatsky_info_i_dell_get, _nmtlib.flatsky_info_i_dell_set)
-    __swig_setmethods__["dell"] = _nmtlib.flatsky_info_dell_set
-    __swig_getmethods__["dell"] = _nmtlib.flatsky_info_dell_get
-    if _newclass:dell = _swig_property(_nmtlib.flatsky_info_dell_get, _nmtlib.flatsky_info_dell_set)
-    __swig_setmethods__["ell_min"] = _nmtlib.flatsky_info_ell_min_set
-    __swig_getmethods__["ell_min"] = _nmtlib.flatsky_info_ell_min_get
-    if _newclass:ell_min = _swig_property(_nmtlib.flatsky_info_ell_min_get, _nmtlib.flatsky_info_ell_min_set)
-    __swig_setmethods__["n_cells"] = _nmtlib.flatsky_info_n_cells_set
-    __swig_getmethods__["n_cells"] = _nmtlib.flatsky_info_n_cells_get
-    if _newclass:n_cells = _swig_property(_nmtlib.flatsky_info_n_cells_get, _nmtlib.flatsky_info_n_cells_set)
     def __init__(self): 
         this = _nmtlib.new_flatsky_info()
         try: self.this.append(this)
@@ -442,12 +427,6 @@ class workspace_flat(_object):
     __swig_setmethods__["ncls"] = _nmtlib.workspace_flat_ncls_set
     __swig_getmethods__["ncls"] = _nmtlib.workspace_flat_ncls_get
     if _newclass:ncls = _swig_property(_nmtlib.workspace_flat_ncls_get, _nmtlib.workspace_flat_ncls_set)
-    __swig_setmethods__["nl_rebin"] = _nmtlib.workspace_flat_nl_rebin_set
-    __swig_getmethods__["nl_rebin"] = _nmtlib.workspace_flat_nl_rebin_get
-    if _newclass:nl_rebin = _swig_property(_nmtlib.workspace_flat_nl_rebin_get, _nmtlib.workspace_flat_nl_rebin_set)
-    __swig_setmethods__["nells"] = _nmtlib.workspace_flat_nells_set
-    __swig_getmethods__["nells"] = _nmtlib.workspace_flat_nells_get
-    if _newclass:nells = _swig_property(_nmtlib.workspace_flat_nells_get, _nmtlib.workspace_flat_nells_set)
     __swig_setmethods__["ellcut_x"] = _nmtlib.workspace_flat_ellcut_x_set
     __swig_getmethods__["ellcut_x"] = _nmtlib.workspace_flat_ellcut_x_get
     if _newclass:ellcut_x = _swig_property(_nmtlib.workspace_flat_ellcut_x_get, _nmtlib.workspace_flat_ellcut_x_set)
@@ -457,15 +436,6 @@ class workspace_flat(_object):
     __swig_setmethods__["fs"] = _nmtlib.workspace_flat_fs_set
     __swig_getmethods__["fs"] = _nmtlib.workspace_flat_fs_get
     if _newclass:fs = _swig_property(_nmtlib.workspace_flat_fs_get, _nmtlib.workspace_flat_fs_set)
-    __swig_setmethods__["pcl_masks"] = _nmtlib.workspace_flat_pcl_masks_set
-    __swig_getmethods__["pcl_masks"] = _nmtlib.workspace_flat_pcl_masks_get
-    if _newclass:pcl_masks = _swig_property(_nmtlib.workspace_flat_pcl_masks_get, _nmtlib.workspace_flat_pcl_masks_set)
-    __swig_setmethods__["l_arr"] = _nmtlib.workspace_flat_l_arr_set
-    __swig_getmethods__["l_arr"] = _nmtlib.workspace_flat_l_arr_get
-    if _newclass:l_arr = _swig_property(_nmtlib.workspace_flat_l_arr_get, _nmtlib.workspace_flat_l_arr_set)
-    __swig_setmethods__["i_band"] = _nmtlib.workspace_flat_i_band_set
-    __swig_getmethods__["i_band"] = _nmtlib.workspace_flat_i_band_get
-    if _newclass:i_band = _swig_property(_nmtlib.workspace_flat_i_band_get, _nmtlib.workspace_flat_i_band_set)
     __swig_setmethods__["n_cells"] = _nmtlib.workspace_flat_n_cells_set
     __swig_getmethods__["n_cells"] = _nmtlib.workspace_flat_n_cells_get
     if _newclass:n_cells = _swig_property(_nmtlib.workspace_flat_n_cells_get, _nmtlib.workspace_flat_n_cells_set)
@@ -822,14 +792,6 @@ couple_cell_py = _nmtlib.couple_cell_py
 def couple_cell_py_flat(*args):
   return _nmtlib.couple_cell_py_flat(*args)
 couple_cell_py_flat = _nmtlib.couple_cell_py_flat
-
-def get_ell_sampling_flat_wsp(*args):
-  return _nmtlib.get_ell_sampling_flat_wsp(*args)
-get_ell_sampling_flat_wsp = _nmtlib.get_ell_sampling_flat_wsp
-
-def get_ell_sampling_flat_field(*args):
-  return _nmtlib.get_ell_sampling_flat_field(*args)
-get_ell_sampling_flat_field = _nmtlib.get_ell_sampling_flat_field
 
 def comp_pspec(*args):
   return _nmtlib.comp_pspec(*args)

@@ -170,13 +170,3 @@ class NmtFieldFlat(object) :
         tmps=temp.reshape([self.fl.ntemp,self.fl.nmaps,self.ny,self.nx])
 
         return tmps
-
-    def get_ell_sampling(self) :
-        """
-        Returns the multipoles at which the coupling matrix has been computed
-
-        :return: list of multipoles
-        """
-        ells=lib.get_ell_sampling_flat_field(self.fl,self.fl.fs.n_ell)
-
-        return ells
