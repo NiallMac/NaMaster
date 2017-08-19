@@ -61,11 +61,15 @@ flouble fs_map_dot(nmt_flatsky_info *fs,flouble *mp1,flouble *mp2)
 
 static void qu2eb(nmt_flatsky_info *fs,int spin,fcomplex **alm)
 {
-#pragma omp parallel default(none) \
-  shared(fs,spin,alm)
+  int sig_overall=-1;
+  if(spin==0)
+    sig_overall=1;
+
+#pragma omp parallel default(none)		\
+  shared(fs,spin,alm,sig_overall)
   {
     int iy;
-    fcomplex sig=-cpow(I,spin);
+    fcomplex sig=sig_overall*cpow(I,spin);
     flouble dkx=2*M_PI/fs->lx;
     flouble dky=2*M_PI/fs->ly;
 
@@ -114,11 +118,15 @@ static void qu2eb(nmt_flatsky_info *fs,int spin,fcomplex **alm)
 
 static void eb2qu(nmt_flatsky_info *fs,int spin,fcomplex **alm)
 {
-#pragma omp parallel default(none) \
-  shared(fs,spin,alm)
+  int sig_overall=-1;
+  if(spin==0)
+    sig_overall=1;
+
+#pragma omp parallel default(none)		\
+  shared(fs,spin,alm,sig_overall)
   { 
     int iy;
-    fcomplex sig=-cpow(-I,spin);
+    fcomplex sig=sig_overall*cpow(-I,spin);
     flouble dkx=2*M_PI/fs->lx;
     flouble dky=2*M_PI/fs->ly;
 
