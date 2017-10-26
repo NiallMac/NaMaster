@@ -39,7 +39,7 @@ class NmtWorkspace(object) :
 
         :param str fname: output file name
         """
-        if self.wsp==None :
+        if self.wsp is None :
             raise KeyError("Must initialize workspace before writing")
         lib.workspace_write(self.wsp,fname)
 
@@ -50,7 +50,7 @@ class NmtWorkspace(object) :
         :param cl_in: set of input power spectra. The number of power spectra must correspond to the spins of the two fields that this NmtWorkspace object was initialized with (i.e. 1 for two spin-0 fields, 2 for one spin-0 and one spin-2 field and 4 for two spin-2 fields).
         :return: coupled power spectrum
         """
-        if((len(cl_in)!=self.wsp.ncls) or (len(cl_in[0])!=self.wsp.lmax+1)) :
+        if((len(cl_in)!=self.wsp.ncls) or (len(cl_in[0])<self.wsp.lmax+1)) :
             raise KeyError("Input power spectrum has wrong shape")
         cl1d=lib.couple_cell_py(self.wsp,cl_in,self.wsp.ncls*(self.wsp.lmax+1))
         clout=np.reshape(cl1d,[self.wsp.ncls,self.wsp.lmax+1])
@@ -65,16 +65,16 @@ class NmtWorkspace(object) :
         :param cl_noise: noise bias (i.e. angular power spectrum of masked noise realizations).
         :return: set of decoupled bandpowers
         """
-        if((len(cl_in)!=self.wsp.ncls) or (len(cl_in[0])!=self.wsp.lmax+1)) :
+        if((len(cl_in)!=self.wsp.ncls) or (len(cl_in[0])<self.wsp.lmax+1)) :
             raise KeyError("Input power spectrum has wrong shape")
         if cl_bias!=None :
-            if((len(cl_bias)!=self.wsp.ncls) or (len(cl_bias[0])!=self.wsp.lmax+1)) :
+            if((len(cl_bias)!=self.wsp.ncls) or (len(cl_bias[0])<self.wsp.lmax+1)) :
                 raise KeyError("Input bias power spectrum has wrong shape")
             clb=cl_bias.copy()
         else :
             clb=np.zeros_like(cl_in)
         if cl_noise!=None :
-            if((len(cl_noise)!=self.wsp.ncls) or (len(cl_noise[0])!=self.wsp.lmax+1)) :
+            if((len(cl_noise)!=self.wsp.ncls) or (len(cl_noise[0])<self.wsp.lmax+1)) :
                 raise KeyError("Input noise power spectrum has wrong shape")
             cln=cl_noise.copy()
         else :
@@ -127,7 +127,7 @@ class NmtWorkspaceFlat(object) :
 
         :param str fname: output file name
         """
-        if self.wsp==None :
+        if self.wsp is None :
             raise KeyError("Must initialize workspace before writing")
         lib.workspace_flat_write(self.wsp,fname)
 
@@ -279,7 +279,7 @@ def compute_full_master(f1,f2,b,cl_noise=None,cl_guess=None,workspace=None) :
     else :
         clg=np.zeros([f1.fl.nmaps*f2.fl.nmaps,3*f1.fl.nside])
 
-    if workspace==None :
+    if workspace is None :
         cl1d=lib.comp_pspec(f1.fl,f2.fl,b.bin,None,cln,clg,len(cln)*b.bin.n_bands)
     else :
         cl1d=lib.comp_pspec(f1.fl,f2.fl,b.bin,workspace.wsp,cln,clg,len(cln)*b.bin.n_bands)
@@ -326,7 +326,7 @@ def compute_full_master_flat(f1,f2,b,cl_noise=None,cl_guess=None,ells_guess=None
         lf=b.get_effective_ells()
         clg=np.zeros([f1.fl.nmaps*f2.fl.nmaps,b.bin.n_bands])
 
-    if workspace==None :
+    if workspace is None :
         cl1d=lib.comp_pspec_flat(f1.fl,f2.fl,b.bin,None,
                                  cln,lf,clg,len(cln)*b.bin.n_bands,
                                  ell_cut_x[0],ell_cut_x[1],ell_cut_y[0],ell_cut_y[1])

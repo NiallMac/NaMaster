@@ -54,6 +54,7 @@ typedef struct {
   int *nell_list;
   int **ell_list;
   flouble **w_list;
+  int ell_max;
 } nmt_binning_scheme;
 nmt_binning_scheme *nmt_bins_constant(int nlb,int lmax);
 nmt_binning_scheme *nmt_bins_create(int nell,int *bpws,int *ells,flouble *weights,int lmax);
