@@ -167,7 +167,7 @@ CTEST(nmt,cell_00) {
   ASSERT_NOT_NULL(cell[0]); ASSERT_NOT_NULL(cell_noise[0]); ASSERT_NOT_NULL(cell_out[0]);
 
   nmt_compute_coupled_cell(f0,f0,cell,3);
-  nmt_decouple_cl_l(w00,cell,cell_noise,cell_noise,cell_out);
+  nmt_decouple_cl_l(w00,cell,cell_noise,cell_noise,cell_out,NULL,NULL);
   compare_arrays(bin->n_bands,cell_out[0],1,0,"test/benchmarks/cl_00_benchmark.txt");
   
   free(cell[0]); free(cell);
@@ -205,7 +205,7 @@ CTEST(nmt,cell_02) {
   }
 
   nmt_compute_coupled_cell(f0,f2,cell,3);
-  nmt_decouple_cl_l(w02,cell,cell_noise,cell_noise,cell_out);
+  nmt_decouple_cl_l(w02,cell,cell_noise,cell_noise,cell_out,NULL,NULL);
   for(ipix=0;ipix<2;ipix++)
     compare_arrays(bin->n_bands,cell_out[ipix],2,ipix,"test/benchmarks/cl_02_benchmark.txt");
   
@@ -251,7 +251,7 @@ CTEST(nmt,cell_22) {
   }
 
   nmt_compute_coupled_cell(f2,f2,cell,3);
-  nmt_decouple_cl_l(w22,cell,cell_noise,cell_noise,cell_out);
+  nmt_decouple_cl_l(w22,cell,cell_noise,cell_noise,cell_out,NULL,NULL);
   for(ipix=0;ipix<4;ipix++)
     compare_arrays(bin->n_bands,cell_out[ipix],4,ipix,"test/benchmarks/cl_22_benchmark.txt");
   

@@ -565,7 +565,45 @@ void decouple_cell_py(nmt_workspace *w,
     cl_out[i]  =&(dout[i*w->bin->n_bands]);
   }
 
-  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out);
+  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out,NULL,NULL);
+
+  free(cl_in);
+  free(cl_noise);
+  free(cl_bias);
+  free(cl_out);
+}
+
+void decouple_cell_py_wbeams(nmt_workspace *w,
+			     int ncl1,int nell1,double *cls1,
+			     int ncl2,int nell2,double *cls2,
+			     int ncl3,int nell3,double *cls3,
+			     int nell11,double *c11,
+			     int nell22,double *c22,
+			     double *dout,int ndout)
+{
+  int i;
+  double **cl_in,**cl_noise,**cl_bias,**cl_out;
+  assert(ncl1==ncl2);
+  assert(ncl2==ncl3);
+  assert(ncl1==w->ncls);
+  assert(nell1==nell2);
+  assert(nell2==nell3);
+  assert(nell11==nell3);
+  assert(nell22==nell11);
+  assert(nell1==w->lmax+1);
+  assert(ndout==w->bin->n_bands*ncl1);
+  cl_in=   malloc(ncl1*sizeof(double *));
+  cl_noise=malloc(ncl2*sizeof(double *));
+  cl_bias= malloc(ncl3*sizeof(double *));
+  cl_out=  malloc(ncl1*sizeof(double *));
+  for(i=0;i<ncl1;i++) {
+    cl_in[i]   =&(cls1[i*nell1]);
+    cl_noise[i]=&(cls2[i*nell2]);
+    cl_bias[i] =&(cls3[i*nell3]);
+    cl_out[i]  =&(dout[i*w->bin->n_bands]);
+  }
+
+  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out,c11,c22);
 
   free(cl_in);
   free(cl_noise);

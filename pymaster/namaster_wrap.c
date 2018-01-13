@@ -3863,7 +3863,45 @@ void decouple_cell_py(nmt_workspace *w,
     cl_out[i]  =&(dout[i*w->bin->n_bands]);
   }
 
-  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out);
+  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out,NULL,NULL);
+
+  free(cl_in);
+  free(cl_noise);
+  free(cl_bias);
+  free(cl_out);
+}
+
+void decouple_cell_py_wbeams(nmt_workspace *w,
+			     int ncl1,int nell1,double *cls1,
+			     int ncl2,int nell2,double *cls2,
+			     int ncl3,int nell3,double *cls3,
+			     int nell11,double *c11,
+			     int nell22,double *c22,
+			     double *dout,int ndout)
+{
+  int i;
+  double **cl_in,**cl_noise,**cl_bias,**cl_out;
+  assert(ncl1==ncl2);
+  assert(ncl2==ncl3);
+  assert(ncl1==w->ncls);
+  assert(nell1==nell2);
+  assert(nell2==nell3);
+  assert(nell11==nell3);
+  assert(nell22==nell11);
+  assert(nell1==w->lmax+1);
+  assert(ndout==w->bin->n_bands*ncl1);
+  cl_in=   malloc(ncl1*sizeof(double *));
+  cl_noise=malloc(ncl2*sizeof(double *));
+  cl_bias= malloc(ncl3*sizeof(double *));
+  cl_out=  malloc(ncl1*sizeof(double *));
+  for(i=0;i<ncl1;i++) {
+    cl_in[i]   =&(cls1[i*nell1]);
+    cl_noise[i]=&(cls2[i*nell2]);
+    cl_bias[i] =&(cls3[i*nell3]);
+    cl_out[i]  =&(dout[i*w->bin->n_bands]);
+  }
+
+  nmt_decouple_cl_l(w,cl_in,cl_noise,cl_bias,cl_out,c11,c22);
 
   free(cl_in);
   free(cl_noise);
@@ -12155,6 +12193,8 @@ SWIGINTERN PyObject *_wrap_decouple_cl_l(PyObject *SWIGUNUSEDPARM(self), PyObjec
   flouble **arg3 = (flouble **) 0 ;
   flouble **arg4 = (flouble **) 0 ;
   flouble **arg5 = (flouble **) 0 ;
+  flouble *arg6 = (flouble *) 0 ;
+  flouble *arg7 = (flouble *) 0 ;
   void *argp1 = 0 ;
   int res1 = 0 ;
   void *argp2 = 0 ;
@@ -12165,13 +12205,19 @@ SWIGINTERN PyObject *_wrap_decouple_cl_l(PyObject *SWIGUNUSEDPARM(self), PyObjec
   int res4 = 0 ;
   void *argp5 = 0 ;
   int res5 = 0 ;
+  void *argp6 = 0 ;
+  int res6 = 0 ;
+  void *argp7 = 0 ;
+  int res7 = 0 ;
   PyObject * obj0 = 0 ;
   PyObject * obj1 = 0 ;
   PyObject * obj2 = 0 ;
   PyObject * obj3 = 0 ;
   PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
   
-  if (!PyArg_ParseTuple(args,(char *)"OOOOO:decouple_cl_l",&obj0,&obj1,&obj2,&obj3,&obj4)) SWIG_fail;
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:decouple_cl_l",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
   res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_nmt_workspace, 0 |  0 );
   if (!SWIG_IsOK(res1)) {
     SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "decouple_cl_l" "', argument " "1"" of type '" "nmt_workspace *""'"); 
@@ -12197,9 +12243,19 @@ SWIGINTERN PyObject *_wrap_decouple_cl_l(PyObject *SWIGUNUSEDPARM(self), PyObjec
     SWIG_exception_fail(SWIG_ArgError(res5), "in method '" "decouple_cl_l" "', argument " "5"" of type '" "flouble **""'"); 
   }
   arg5 = (flouble **)(argp5);
+  res6 = SWIG_ConvertPtr(obj5, &argp6,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res6)) {
+    SWIG_exception_fail(SWIG_ArgError(res6), "in method '" "decouple_cl_l" "', argument " "6"" of type '" "flouble *""'"); 
+  }
+  arg6 = (flouble *)(argp6);
+  res7 = SWIG_ConvertPtr(obj6, &argp7,SWIGTYPE_p_double, 0 |  0 );
+  if (!SWIG_IsOK(res7)) {
+    SWIG_exception_fail(SWIG_ArgError(res7), "in method '" "decouple_cl_l" "', argument " "7"" of type '" "flouble *""'"); 
+  }
+  arg7 = (flouble *)(argp7);
   {
     SWIG_PYTHON_THREAD_BEGIN_ALLOW;
-    nmt_decouple_cl_l(arg1,arg2,arg3,arg4,arg5);
+    nmt_decouple_cl_l(arg1,arg2,arg3,arg4,arg5,arg6,arg7);
     SWIG_PYTHON_THREAD_END_ALLOW;
   }
   resultobj = SWIG_Py_Void();
@@ -16439,6 +16495,205 @@ fail:
 }
 
 
+SWIGINTERN PyObject *_wrap_decouple_cell_py_wbeams(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
+  PyObject *resultobj = 0;
+  nmt_workspace *arg1 = (nmt_workspace *) 0 ;
+  int arg2 ;
+  int arg3 ;
+  double *arg4 = (double *) 0 ;
+  int arg5 ;
+  int arg6 ;
+  double *arg7 = (double *) 0 ;
+  int arg8 ;
+  int arg9 ;
+  double *arg10 = (double *) 0 ;
+  int arg11 ;
+  double *arg12 = (double *) 0 ;
+  int arg13 ;
+  double *arg14 = (double *) 0 ;
+  double *arg15 = (double *) 0 ;
+  int arg16 ;
+  void *argp1 = 0 ;
+  int res1 = 0 ;
+  PyArrayObject *array2 = NULL ;
+  int is_new_object2 = 0 ;
+  PyArrayObject *array5 = NULL ;
+  int is_new_object5 = 0 ;
+  PyArrayObject *array8 = NULL ;
+  int is_new_object8 = 0 ;
+  PyArrayObject *array11 = NULL ;
+  int is_new_object11 = 0 ;
+  PyArrayObject *array13 = NULL ;
+  int is_new_object13 = 0 ;
+  PyObject *array15 = NULL ;
+  PyObject * obj0 = 0 ;
+  PyObject * obj1 = 0 ;
+  PyObject * obj2 = 0 ;
+  PyObject * obj3 = 0 ;
+  PyObject * obj4 = 0 ;
+  PyObject * obj5 = 0 ;
+  PyObject * obj6 = 0 ;
+  
+  if (!PyArg_ParseTuple(args,(char *)"OOOOOOO:decouple_cell_py_wbeams",&obj0,&obj1,&obj2,&obj3,&obj4,&obj5,&obj6)) SWIG_fail;
+  res1 = SWIG_ConvertPtr(obj0, &argp1,SWIGTYPE_p_nmt_workspace, 0 |  0 );
+  if (!SWIG_IsOK(res1)) {
+    SWIG_exception_fail(SWIG_ArgError(res1), "in method '" "decouple_cell_py_wbeams" "', argument " "1"" of type '" "nmt_workspace *""'"); 
+  }
+  arg1 = (nmt_workspace *)(argp1);
+  {
+    npy_intp size[2] = {
+      -1, -1 
+    };
+    array2 = obj_to_array_contiguous_allow_conversion(obj1,
+      NPY_DOUBLE,
+      &is_new_object2);
+    if (!array2 || !require_dimensions(array2, 2) ||
+      !require_size(array2, size, 2)) SWIG_fail;
+    arg2 = (int) array_size(array2,0);
+    arg3 = (int) array_size(array2,1);
+    arg4 = (double*) array_data(array2);
+  }
+  {
+    npy_intp size[2] = {
+      -1, -1 
+    };
+    array5 = obj_to_array_contiguous_allow_conversion(obj2,
+      NPY_DOUBLE,
+      &is_new_object5);
+    if (!array5 || !require_dimensions(array5, 2) ||
+      !require_size(array5, size, 2)) SWIG_fail;
+    arg5 = (int) array_size(array5,0);
+    arg6 = (int) array_size(array5,1);
+    arg7 = (double*) array_data(array5);
+  }
+  {
+    npy_intp size[2] = {
+      -1, -1 
+    };
+    array8 = obj_to_array_contiguous_allow_conversion(obj3,
+      NPY_DOUBLE,
+      &is_new_object8);
+    if (!array8 || !require_dimensions(array8, 2) ||
+      !require_size(array8, size, 2)) SWIG_fail;
+    arg8 = (int) array_size(array8,0);
+    arg9 = (int) array_size(array8,1);
+    arg10 = (double*) array_data(array8);
+  }
+  {
+    npy_intp size[1] = {
+      -1
+    };
+    array11 = obj_to_array_contiguous_allow_conversion(obj4,
+      NPY_DOUBLE,
+      &is_new_object11);
+    if (!array11 || !require_dimensions(array11, 1) ||
+      !require_size(array11, size, 1)) SWIG_fail;
+    arg11 = (int) array_size(array11,0);
+    arg12 = (double*) array_data(array11);
+  }
+  {
+    npy_intp size[1] = {
+      -1
+    };
+    array13 = obj_to_array_contiguous_allow_conversion(obj5,
+      NPY_DOUBLE,
+      &is_new_object13);
+    if (!array13 || !require_dimensions(array13, 1) ||
+      !require_size(array13, size, 1)) SWIG_fail;
+    arg13 = (int) array_size(array13,0);
+    arg14 = (double*) array_data(array13);
+  }
+  {
+    npy_intp dims[1];
+    if (!PyInt_Check(obj6))
+    {
+      const char* typestring = pytype_string(obj6);
+      PyErr_Format(PyExc_TypeError,
+        "Int dimension expected.  '%s' given.",
+        typestring);
+      SWIG_fail;
+    }
+    arg16 = (int) PyInt_AsLong(obj6);
+    dims[0] = (npy_intp) arg16;
+    array15 = PyArray_SimpleNew(1, dims, NPY_DOUBLE);
+    if (!array15) SWIG_fail;
+    arg15 = (double*) array_data(array15);
+  }
+  {
+    SWIG_PYTHON_THREAD_BEGIN_ALLOW;
+    decouple_cell_py_wbeams(arg1,arg2,arg3,arg4,arg5,arg6,arg7,arg8,arg9,arg10,arg11,arg12,arg13,arg14,arg15,arg16);
+    SWIG_PYTHON_THREAD_END_ALLOW;
+  }
+  resultobj = SWIG_Py_Void();
+  {
+    resultobj = SWIG_Python_AppendOutput(resultobj,(PyObject*)array15);
+  }
+  {
+    if (is_new_object2 && array2)
+    {
+      Py_DECREF(array2); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  {
+    if (is_new_object8 && array8)
+    {
+      Py_DECREF(array8); 
+    }
+  }
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  return resultobj;
+fail:
+  {
+    if (is_new_object2 && array2)
+    {
+      Py_DECREF(array2); 
+    }
+  }
+  {
+    if (is_new_object5 && array5)
+    {
+      Py_DECREF(array5); 
+    }
+  }
+  {
+    if (is_new_object8 && array8)
+    {
+      Py_DECREF(array8); 
+    }
+  }
+  {
+    if (is_new_object11 && array11)
+    {
+      Py_DECREF(array11); 
+    }
+  }
+  {
+    if (is_new_object13 && array13)
+    {
+      Py_DECREF(array13); 
+    }
+  }
+  return NULL;
+}
+
+
 SWIGINTERN PyObject *_wrap_decouple_cell_py_flat(PyObject *SWIGUNUSEDPARM(self), PyObject *args) {
   PyObject *resultobj = 0;
   nmt_workspace_flat *arg1 = (nmt_workspace_flat *) 0 ;
@@ -17405,6 +17660,7 @@ static PyMethodDef SwigMethods[] = {
 	 { (char *)"comp_pspec_coupled", _wrap_comp_pspec_coupled, METH_VARARGS, NULL},
 	 { (char *)"comp_pspec_coupled_flat", _wrap_comp_pspec_coupled_flat, METH_VARARGS, NULL},
 	 { (char *)"decouple_cell_py", _wrap_decouple_cell_py, METH_VARARGS, NULL},
+	 { (char *)"decouple_cell_py_wbeams", _wrap_decouple_cell_py_wbeams, METH_VARARGS, NULL},
 	 { (char *)"decouple_cell_py_flat", _wrap_decouple_cell_py_flat, METH_VARARGS, NULL},
 	 { (char *)"couple_cell_py", _wrap_couple_cell_py, METH_VARARGS, NULL},
 	 { (char *)"couple_cell_py_flat", _wrap_couple_cell_py_flat, METH_VARARGS, NULL},

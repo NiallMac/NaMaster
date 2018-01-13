@@ -101,7 +101,7 @@ void run_master(nmt_field *fl1,nmt_field *fl2,
   nmt_compute_deprojection_bias(fl1,fl2,cl_proposal,cl_bias);
 
   printf("Computing decoupled bandpowers\n");
-  nmt_decouple_cl_l(w,cl_data,cl_noise,cl_bias,cl_out);
+  nmt_decouple_cl_l(w,cl_data,cl_noise,cl_bias,cl_out,NULL,NULL);
 
   printf("Writing output\n");
   fi=my_fopen(fname_out,"w");

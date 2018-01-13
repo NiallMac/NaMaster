@@ -56,13 +56,15 @@ class NmtWorkspace(object) :
         clout=np.reshape(cl1d,[self.wsp.ncls,self.wsp.lmax+1])
         return clout
 
-    def decouple_cell(self,cl_in,cl_bias=None,cl_noise=None) :
+    def decouple_cell(self,cl_in,cl_bias=None,cl_noise=None,beam1=None,beam2=None) :
         """
         Decouples a set of pseudo-Cl power spectra into a set of bandpowers by inverting the binned coupling matrix (se Eq. 4 of the C API documentation).
 
         :param cl_in: set of input power spectra. The number of power spectra must correspond to the spins of the two fields that this NmtWorkspace object was initialized with (i.e. 1 for two spin-0 fields, 2 for one spin-0 and one spin-2 field and 4 for two spin-2 fields).
         :param cl_bias: bias to the power spectrum associated to contaminant residuals (optional). This can be computed through :func:`pymaster.deprojection_bias`.
         :param cl_noise: noise bias (i.e. angular power spectrum of masked noise realizations).
+        :param beam1: beam for the first field.
+        :param beam2: beam for the second field. If beam1 and beam2 aren't None, the mode-coupling matrix will be recomputed with the new beams prior to inverting it.
         :return: set of decoupled bandpowers
         """
         if((len(cl_in)!=self.wsp.ncls) or (len(cl_in[0])<self.wsp.lmax+1)) :
@@ -80,7 +82,11 @@ class NmtWorkspace(object) :
         else :
             cln=np.zeros_like(cl_in)
 
-        cl1d=lib.decouple_cell_py(self.wsp,cl_in,cln,clb,self.wsp.ncls*self.wsp.bin.n_bands)
+        if ((beam1 is not None) and (beam2 is not None)) :
+            cl1d=lib.decouple_cell_py_wbeams(self.wsp,cl_in,cln,clb,beam1,beam2,
+                                             self.wsp.ncls*self.wsp.bin.n_bands)
+        else :
+            cl1d=lib.decouple_cell_py(self.wsp,cl_in,cln,clb,self.wsp.ncls*self.wsp.bin.n_bands)
         clout=np.reshape(cl1d,[self.wsp.ncls,self.wsp.bin.n_bands])
 
         return clout

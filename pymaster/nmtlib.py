@@ -727,8 +727,8 @@ def couple_cl_l(w, cl_in, cl_out):
     return _nmtlib.couple_cl_l(w, cl_in, cl_out)
 couple_cl_l = _nmtlib.couple_cl_l
 
-def decouple_cl_l(w, cl_in, cl_noise_in, cl_bias, cl_out):
-    return _nmtlib.decouple_cl_l(w, cl_in, cl_noise_in, cl_bias, cl_out)
+def decouple_cl_l(w, cl_in, cl_noise_in, cl_bias, cl_out, bm1, bm2):
+    return _nmtlib.decouple_cl_l(w, cl_in, cl_noise_in, cl_bias, cl_out, bm1, bm2)
 decouple_cl_l = _nmtlib.decouple_cl_l
 
 def compute_coupled_cell(fl1, fl2, cl_out, iter):
@@ -956,6 +956,10 @@ comp_pspec_coupled_flat = _nmtlib.comp_pspec_coupled_flat
 def decouple_cell_py(w, ncl1, ncl2, ncl3, dout):
     return _nmtlib.decouple_cell_py(w, ncl1, ncl2, ncl3, dout)
 decouple_cell_py = _nmtlib.decouple_cell_py
+
+def decouple_cell_py_wbeams(w, ncl1, ncl2, ncl3, nell11, nell22, dout):
+    return _nmtlib.decouple_cell_py_wbeams(w, ncl1, ncl2, ncl3, nell11, nell22, dout)
+decouple_cell_py_wbeams = _nmtlib.decouple_cell_py_wbeams
 
 def decouple_cell_py_flat(w, ncl1, ncl2, ncl3, dout):
     return _nmtlib.decouple_cell_py_flat(w, ncl1, ncl2, ncl3, dout)

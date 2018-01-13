@@ -134,7 +134,7 @@ void nmt_workspace_write(nmt_workspace *w,char *fname)
   fclose(fo);
 }
 
-static void bin_coupling_matrix(nmt_workspace *w)
+static void bin_coupling_matrix(nmt_workspace *w,double *bm1,double *bm2)
 {
   int icl_a,icl_b,ib2,ib3,l2,l3,i2,i3,sig;
   
@@ -148,7 +148,7 @@ static void bin_coupling_matrix(nmt_workspace *w)
 	    for(i3=0;i3<w->bin->nell_list[ib3];i3++) {
 	      l3=w->bin->ell_list[ib3][i3];
 	      coupling_b+=w->coupling_matrix_unbinned[w->ncls*l2+icl_a][w->ncls*l3+icl_b]*
-		w->bin->w_list[ib2][i2]*weigh_l(l2)/weigh_l(l3);
+		w->bin->w_list[ib2][i2]*bm1[l3]*bm2[l3]*weigh_l(l2)/weigh_l(l3);
 	    }
 	  }
 	  gsl_matrix_set(w->coupling_matrix_binned,w->ncls*ib2+icl_a,w->ncls*ib3+icl_b,coupling_b);
@@ -167,7 +167,7 @@ nmt_workspace *nmt_compute_coupling_matrix(nmt_field *fl1,nmt_field *fl2,nmt_bin
 {
   int l2;
   nmt_workspace *w;
-  flouble *beam_prod;
+  //flouble *beam_prod;
   int n_cl=fl1->nmaps*fl2->nmaps;
 
   if(fl1->nside!=fl2->nside)
@@ -175,17 +175,14 @@ nmt_workspace *nmt_compute_coupling_matrix(nmt_field *fl1,nmt_field *fl2,nmt_bin
   if(bin->ell_max>=3*fl1->nside)
     report_error(1,"Requesting bandpowers for too high a multipole given map resolution\n");
   w=nmt_workspace_new(fl1->nside,n_cl,bin);
-  beam_prod=my_malloc((w->lmax+1)*sizeof(flouble));
   memcpy(w->mask1,fl1->mask,he_nside2npix(w->nside)*sizeof(flouble));
   memcpy(w->mask2,fl2->mask,he_nside2npix(w->nside)*sizeof(flouble));
   he_anafast(&(fl1->mask),&(fl2->mask),0,0,&(w->pcl_masks),fl1->nside,w->lmax,HE_NITER_DEFAULT);
-  for(l2=0;l2<=w->lmax;l2++) {
+  for(l2=0;l2<=w->lmax;l2++)
     w->pcl_masks[l2]*=(2*l2+1.);
-    beam_prod[l2]=fl1->beam[l2]*fl2->beam[l2];
-  }
 
 #pragma omp parallel default(none)		\
-  shared(w,beam_prod,fl1,fl2)
+  shared(w,fl1,fl2)
   {
     int ll2,ll3;
     double *wigner_00=NULL,*wigner_22=NULL,*wigner_12=NULL,*wigner_02=NULL;
@@ -316,7 +313,7 @@ nmt_workspace *nmt_compute_coupling_matrix(nmt_field *fl1,nmt_field *fl2,nmt_bin
 	for(jj=0;jj<w->ncls;jj++) {
 	  int kk;
 	  for(kk=0;kk<w->ncls;kk++)
-	    w->coupling_matrix_unbinned[w->ncls*ll2+jj][w->ncls*ll3+kk]*=(2*ll3+1.)*beam_prod[ll3]/(4*M_PI);
+	    w->coupling_matrix_unbinned[w->ncls*ll2+jj][w->ncls*ll3+kk]*=(2*ll3+1.)/(4*M_PI);
 	}
       }
     } //end omp for
@@ -330,8 +327,7 @@ nmt_workspace *nmt_compute_coupling_matrix(nmt_field *fl1,nmt_field *fl2,nmt_bin
     }
   } //end omp parallel
 
-  bin_coupling_matrix(w);
-  free(beam_prod);
+  bin_coupling_matrix(w,fl1->beam,fl2->beam);
 
   return w;
 }
@@ -522,12 +518,15 @@ void nmt_couple_cl_l(nmt_workspace *w,flouble **cl_in,flouble **cl_out)
 }
 
 void nmt_decouple_cl_l(nmt_workspace *w,flouble **cl_in,flouble **cl_noise_in,
-		       flouble **cl_bias,flouble **cl_out)
+		       flouble **cl_bias,flouble **cl_out,flouble *bm1,flouble *bm2)
 {
   int icl,ib2,l2;
   gsl_vector *dl_map_bad_b=gsl_vector_alloc(w->ncls*w->bin->n_bands);
   gsl_vector *dl_map_good_b=gsl_vector_alloc(w->ncls*w->bin->n_bands);
 
+  if((bm1!=NULL) && (bm2!=NULL))
+    bin_coupling_matrix(w,bm1,bm2);
+  
   //Bin coupled power spectrum
   for(icl=0;icl<w->ncls;icl++) {
     for(ib2=0;ib2<w->bin->n_bands;ib2++) {
@@ -580,7 +579,7 @@ nmt_workspace *nmt_compute_power_spectra(nmt_field *fl1,nmt_field *fl2,
   }
   nmt_compute_coupled_cell(fl1,fl2,cl_data,HE_NITER_DEFAULT);
   nmt_compute_deprojection_bias(fl1,fl2,cl_proposal,cl_bias);
-  nmt_decouple_cl_l(w,cl_data,cl_noise,cl_bias,cl_out);
+  nmt_decouple_cl_l(w,cl_data,cl_noise,cl_bias,cl_out,NULL,NULL);
   for(ii=0;ii<w->ncls;ii++) {
     free(cl_bias[ii]);
     free(cl_data[ii]);
