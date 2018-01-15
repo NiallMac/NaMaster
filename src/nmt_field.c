@@ -61,7 +61,7 @@ static void nmt_purify(nmt_field *fl)
     purify[1]=1;
 
   //Compute mask SHT (store in walm)
-  he_map2alm(fl->nside,fl->lmax,1,0,&(fl->mask),walm  ,10);
+  he_map2alm(fl->nside,fl->lmax,1,0,&(fl->mask),walm  ,HE_NITER_DEFAULT);
 
   //Product with spin-0 mask
   for(imap=0;imap<fl->nmaps;imap++) {
